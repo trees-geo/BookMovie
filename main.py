@@ -17,10 +17,10 @@ class Profile(BaseModel):
             "example": {
                 "name": "tree",
                 "email": "trees",
-                "age": 4,
+                "age": 24,
                 "created_on": datetime.now().date(), # string also works
                 "created_at": datetime.now().time(),
-                "event_id": uuid4()
+                "event_id": uuid4() # or default_factory=uuid4 if using field example
             }
         }
 
@@ -34,7 +34,7 @@ class Product(BaseModel):
     price: float = Field(title="Price of item", gt=0, description="cost")
     discount: float
     discounted_price: float
-    tags : set[str] = set() # this works, even [] due to internal conversion
+    tags : set[str] = set() # this works, even [] because Pydantic automatically coerces the input to match the field type.
     # tags : List[str] = []
     # image: Image
     image: list[Image] # Nested model
@@ -66,9 +66,9 @@ class Offers(BaseModel):
     products: list[Product] # Deeply Nested model
 
 class User(BaseModel):
-    name: str = Field(example="elvy")
-    nick_name: list[str] = Field(example=["el", "elvu"]) # no need to make strings, give it as is
-    email: str = Field(example="elvy@91")
+    name: str = Field(example="ricky")
+    nick_name: list[str] = Field(example=["rick", "morty"]) # no need to make strings, give it as is
+    email: str = Field(example="ricky@morty")
     age: int = Field(example=33)
 
 app = FastAPI()
