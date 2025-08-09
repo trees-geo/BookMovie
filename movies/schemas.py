@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from datetime import date
 
@@ -32,3 +33,14 @@ class Producer(BaseModel):
     name: str
     email: str
     password: str
+
+class User(BaseModel):
+    user: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenUser(BaseModel):
+    username: Optional[str] = None
