@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+import time
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -30,10 +31,13 @@ SECRET_KEY = "602f625a03237d3c9d6baa7db0416a14de0dea17c56acfd78add111d6b6cfcc1"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 
-def generate_token(data: dict):
+def generate_token(data: dict, refresh=False):
+    TOKEN_EXPIRY = ACCESS_TOKEN_EXPIRE_MINUTES * 60 if not refresh else 30*60
     to_encode = data.copy()
-    expire = datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"expire": expire.isoformat()})
+    to_encode.update({
+        "iat": int(time.time()),
+        "exp": int(time.time()) + TOKEN_EXPIRY
+    })
     encoded_jwt = jwt.encode(to_encode, key=SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -47,4 +51,5 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     if not pwd_context.verify(request.password, user.password):
         raise HTTPException(status_code=404, detail="Invalid Password. Please Retry")
     access_token = generate_token({"user": user.name})
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token = generate_token({"user": user.name}, True)
+    return {"access_token": access_token, "refresh_token": refresh_token}
