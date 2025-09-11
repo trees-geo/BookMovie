@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, status
 from pydantic import BaseModel, Field, HttpUrl
 from datetime import datetime, date, time, timedelta
 from uuid import UUID, uuid4
 from typing import List, Set
+from fastapi.responses import Response
 
 class Profile(BaseModel):
     name: str
@@ -93,20 +94,20 @@ def dynamic(id: int):
 def profile(username:str):
     return f"THis is {username}'s profile page"
 
-@app.get("/product")
+@app.get("/product", status_code=status.HTTP_200_OK)
 def products(id:int = 0, type:str = "electronics"):
     return f"THe product id is {id} and type of the product is {type}"
 
-@app.get("/user/{username}/comments")
+@app.get("/user/{username}/comments", status_code=status.HTTP_200_OK)
 def profile(username:str, commentid:int):
     return f"THis is the {username}'s associated comment id : {commentid}"
 
-@app.post("/adduser")
+@app.post("/adduser", status_code=status.HTTP_201_CREATED)
 def add(profile: Profile):
     name = profile.name
     return f"User: {name} added successfully"
 
-@app.post("/addproduct")
+@app.post("/addproduct", status_code=status.HTTP_201_CREATED)
 def addproduct(product:Product):
     product.discounted_price = product.price - (product.price * product.discount / 100)
     return product

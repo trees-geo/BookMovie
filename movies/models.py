@@ -20,3 +20,9 @@ class Producer(Base):
     email = Column(String)
     password = Column(String)
     movie = relationship("Movie", back_populates="producer")
+
+class User(Base):
+    __tablename__ = "user"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String)
+    refresh_token = Column(String)

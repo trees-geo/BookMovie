@@ -26,27 +26,28 @@ app = FastAPI(
     docs_url="/documentation"
 )
 
-SKIP_AUTH_PATHS = ["/documentation", "/openapi.json", "/docs", "/redoc", "/login", "/public"]
+# SKIP_AUTH_PATHS = ["/documentation", "/openapi.json", "/docs", "/redoc", "/login", "/public"]
 
-@app.middleware("http")
-async def verify_jwt_cookie(request: Request, call_next):
-    # Skip auth for specific routes
-    if request.url.path in SKIP_AUTH_PATHS:
-        return await call_next(request)
+# @app.middleware("http")
+# async def verify_jwt_cookie(request: Request, call_next):
+#     print(request)
+#     # Skip auth for specific routes
+#     if request.url.path in SKIP_AUTH_PATHS:
+#         return await call_next(request)
     
-    token = request.headers.get("authorization")[7:] 
+#     token = request.headers.get("authorization")[7:] 
 
-    if not token:
-        return JSONResponse(status_code=401, content={"error": "Missing token"})
+#     if not token:
+#         return JSONResponse(status_code=401, content={"error": "Missing token"})
 
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], options={"verify_exp": True})
-        request.state.user = payload  # store decoded data for later use
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], options={"verify_exp": True})
+#         request.state.user = payload  # store decoded data for later use
 
-    except JWTError as e:
-        return JSONResponse(status_code=401, content={"error": f"{str(e)}"})
+#     except JWTError as e:
+#         return JSONResponse(status_code=401, content={"error": f"{str(e)}"})
 
-    return await call_next(request)
+#     return await call_next(request)
 
 
 

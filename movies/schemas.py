@@ -44,3 +44,4 @@ class Token(BaseModel):
 
 class TokenUser(BaseModel):
     username: Optional[str] = None
+    refresh_token: Optional[str] = None
